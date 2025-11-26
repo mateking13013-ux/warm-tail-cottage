@@ -34,9 +34,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.disabled = true;
             }
 
+            // Set replyto from email field
+            const emailInput = form.querySelector('input[name="email"]');
+            const replytoInput = form.querySelector('input[name="replyto"]');
+            if (emailInput && replytoInput) {
+                replytoInput.value = emailInput.value;
+            }
+
             const formData = new FormData(form);
             if (!formData.get('access_key')) {
-                formData.set('access_key', '2b7794b2-ad87-44fd-b8b2-81f94982f768');
+                formData.set('access_key', '178b505f-e901-42d0-9e7e-6d04fac56dbf');
             }
 
             try {
@@ -78,15 +85,51 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Mobile menu toggle (if needed for future mobile menu)
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const mobileMenu = document.querySelector('.mobile-menu');
-    
-    if (mobileMenuToggle && mobileMenu) {
-        mobileMenuToggle.addEventListener('click', function() {
-            mobileMenu.classList.toggle('active');
+    // Mobile menu toggle
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+    const mobileMenuClose = document.querySelector('.mobile-menu-close');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link, .mobile-cta-button');
+
+    function openMobileMenu() {
+        mobileMenuOverlay.classList.add('active');
+        mobileMenuBtn.classList.add('active');
+        document.body.classList.add('mobile-menu-open');
+    }
+
+    function closeMobileMenu() {
+        mobileMenuOverlay.classList.remove('active');
+        mobileMenuBtn.classList.remove('active');
+        document.body.classList.remove('mobile-menu-open');
+    }
+
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+    }
+
+    if (mobileMenuClose) {
+        mobileMenuClose.addEventListener('click', closeMobileMenu);
+    }
+
+    if (mobileMenuOverlay) {
+        mobileMenuOverlay.addEventListener('click', function(e) {
+            if (e.target === mobileMenuOverlay) {
+                closeMobileMenu();
+            }
         });
     }
+
+    // Close menu when clicking nav links
+    mobileNavLinks.forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+    });
+
+    // Close menu on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenuOverlay.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
 
     // Add active state to navigation based on scroll position
     window.addEventListener('scroll', function() {
